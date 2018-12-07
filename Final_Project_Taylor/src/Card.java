@@ -31,17 +31,6 @@ public class Card {
 		}
 		this.shape = s;
 		this.id = z;
-	//	System.out.println("New Card : " + name + " of " + shape + " (id = " + id + ")");
+	    //System.out.println(name + " of " + shape + " has been created.");
 	}
-	
-	public void setUsed() {
-		used = true;
-	//	System.out.println("The Card  " + name + " of " + shape + " is now used");
-	}
-	
-	public void setNotUsed() {
-		used = false;
-	//	System.out.println("The Card  " + name + " of " + shape + " is now not used");
-	}
-	
 }

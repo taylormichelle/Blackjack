@@ -10,6 +10,7 @@ import java.util.*;
 
 public class GUI extends JFrame {
 	
+	final int BLACKJACK = 21;
 	//randomizer for cards
 	Random rand = new Random();
 	
@@ -23,14 +24,14 @@ public class GUI extends JFrame {
 	ArrayList<Message> Log = new ArrayList<Message>();
 	
 	//fonts used
-	Font cardFont = new Font("Impact", Font.PLAIN, 40);
+	Font cardFont = new Font("Calibri", Font.PLAIN, 40);
 	Font questionFont = new Font("Arial", Font.BOLD, 40);
 	Font buttonFont = new Font("Calibri", Font.PLAIN, 25);
 	Font logFont = new Font("Calibri", Font.PLAIN, 30);
 	
 	//Log message colors
-	Color cDealer = Color.red;
-	Color cPlayer = Color.blue;
+	Color cDealer = Color.RED;
+	Color cPlayer = Color.GREEN;
 	
 	//strings used
 	String questHitStay = new String("Hit or Stay?");
@@ -89,6 +90,7 @@ public class GUI extends JFrame {
 	int[] polyY = new int[4];
 	
 	public GUI() {
+		this.setResizable(true);
 		this.setTitle("Michelle's Blackjack Table");
 		this.setBounds((sW-aW-6)/2, (sH-aH-29)/2, aW+6, aH+29);
 		this.setResizable(false);
@@ -103,7 +105,7 @@ public class GUI extends JFrame {
 		
 		ActHit actHit = new ActHit();
 		hit.addActionListener(actHit);
-		hit.setBounds(1000, 200, 100, 50);
+		hit.setBounds(1000, 600, 100, 50);
 		hit.setBackground(colorButton);
 		hit.setFont(buttonFont);
 		hit.setText("HIT");
@@ -111,7 +113,7 @@ public class GUI extends JFrame {
 		
 		ActStay actStay = new ActStay();
 		stay.addActionListener(actStay);
-		stay.setBounds(1150, 200, 100, 50);
+		stay.setBounds(1150, 600, 100, 50);
 		stay.setBackground(colorButton);
 		stay.setFont(buttonFont);
 		stay.setText("STAY");
@@ -157,11 +159,10 @@ public class GUI extends JFrame {
 
 	}
 	
-	public void totalsChecker() {
+	public void totalsChecker() { // Totals
 		
+		// Player total
 		int acesCount;
-		
-		// Totals
 		playerMinTotal = 0;
 		playerMaxTotal = 0;
 		acesCount = 0;
@@ -171,12 +172,12 @@ public class GUI extends JFrame {
 			playerMaxTotal += c.value;
 			if (c.name == "Ace")
 				acesCount++;
-			
 		}
+	
+		if (acesCount > 0) // If the user has an ace
+			playerMaxTotal += 10; // Give the option of making it a 1 or 11
 		
-		if (acesCount > 0)
-			playerMaxTotal += 10;
-		
+		// Dealer Total
 		dealerMinTotal = 0;
 		dealerMaxTotal = 0;
 		acesCount = 0;
@@ -186,41 +187,43 @@ public class GUI extends JFrame {
 			dealerMaxTotal += c.value;
 			if (c.name == "Ace")
 				acesCount++;
-			
 		}
 		
-		if (acesCount > 0)
-			dealerMaxTotal += 10;
+		if (acesCount > 0) // If the dealer has an ace
+			dealerMaxTotal += 10; // Give the option of making it a 1 or 11
 	}
 	
-	public void setWinner() {
-		int pPoints = 0;
-		int dPoints = 0;
+	public void setWinner() { // Determine winner based on totals
+		int pPoints = 0; // Player points
+		int dPoints = 0; // Dealer points
 		
-		if (playerMaxTotal > 21) {
+		if (playerMaxTotal > BLACKJACK) { // If player busts
 			pPoints = playerMinTotal;
 		} else {
 			pPoints = playerMaxTotal;
 		}
 		
-		if (dealerMaxTotal > 21) {
+		if (dealerMaxTotal > BLACKJACK) { // If dealer busts
 			dPoints = dealerMinTotal;
 		} else {
 			dPoints = dealerMaxTotal;
 		}
 		
-		if (pPoints > 21 && dPoints > 21) {
-			Log.add(new Message("Nobody wins!", "Dealer"));
-		} else if (dPoints > 21) {
+		if (pPoints > BLACKJACK && dPoints > BLACKJACK) { // If player and dealer bust
+			Log.add(new Message("Draw!", "Dealer"));
+		}
+		else if(pPoints == dPoints) {
+			Log.add(new Message("Draw!", "Dealer"));
+		} else if (dPoints > BLACKJACK) { // If the player has less than 21
 			Log.add(new Message("You win!", "Player"));
 			Main.pWins++;
-		} else if (pPoints > 21) {
+		} else if (pPoints > BLACKJACK) { // If player has more points than blackjack
 			Log.add(new Message("Dealer wins!", "Dealer"));
 			Main.dWins++;
-		} else if (pPoints > dPoints) {
+		} else if (pPoints > dPoints) { // If player has more points than the dealer
 			Log.add(new Message("You win!", "Player"));
 			Main.pWins++;
-		} else {
+		} else { 
 			Log.add(new Message("Dealer wins!", "Dealer"));
 			Main.dWins++;
 		}
@@ -229,38 +232,37 @@ public class GUI extends JFrame {
 	
 	public void dealerHitStay() {
 		dealerHit = true;
-		
 		int dAvailable = 0;
-		if (dealerMaxTotal > 21) {
-			dAvailable = dealerMinTotal;
-		} else {
-			dAvailable = dealerMaxTotal;
-		}
 		
 		int pAvailable = 0;
-		if (playerMaxTotal > 21) {
+		if (playerMaxTotal > BLACKJACK) {
 			pAvailable = playerMinTotal;
 		} else {
 			pAvailable = playerMaxTotal;
 		}
 		
+		if (dealerMaxTotal > BLACKJACK) {
+			dAvailable = dealerMinTotal;
+		} else {
+			dAvailable = dealerMaxTotal;
+		}
+
 		repaint();
 		
-		if ((dAvailable < pAvailable && pAvailable <= 21) || dAvailable < 17) {
+		if ((dAvailable < pAvailable && pAvailable <= BLACKJACK) || dAvailable < 17) {
 			int tempMax = 0;
-			if (dealerMaxTotal <= 21) {
+			if (dealerMaxTotal <= BLACKJACK) {
 				tempMax = dealerMaxTotal;
 			} else {
 				tempMax = dealerMinTotal;
 			}
-			String mess = ("Dealer: Hit (total: " + Integer.toString(tempMax) + ")");
-			Log.add(new Message(mess, "Dealer"));
-
+			String message = ("Dealer: Hit (total: " + Integer.toString(tempMax) + ")");
+			Log.add(new Message(message, "Dealer"));
 			dealerCards.add(Cards.pop());
 			
 		} else {
 			int tempMax = 0;
-			if (dealerMaxTotal <= 21) {
+			if (dealerMaxTotal <= BLACKJACK) {
 				tempMax = dealerMaxTotal;
 			} else {
 				tempMax = dealerMinTotal;
@@ -275,7 +277,6 @@ public class GUI extends JFrame {
 	}
 	
 	public void refresher() {
-		
 		if (hit_stay_q == true) {
 			hit.setVisible(true);
 			stay.setVisible(true);
@@ -289,7 +290,7 @@ public class GUI extends JFrame {
 				dealerHitStay();
 		}
 		
-		if (play_more_q == true || dealer_turn == true) {
+		if (play_more_q == true) {
 			yes.setVisible(true);
 			no.setVisible(true);
 		} else {
@@ -299,27 +300,27 @@ public class GUI extends JFrame {
 		
 		totalsChecker();
 		
-		if ((playerMaxTotal == 21 || playerMinTotal >= 21) && hit_stay_q == true) {
+		if ((playerMaxTotal == BLACKJACK || playerMinTotal >= BLACKJACK) && hit_stay_q == true) {
 			int tempMax = 0;
-			if (playerMaxTotal <= 21) {
+			if (playerMaxTotal <= BLACKJACK) {
 				tempMax = playerMaxTotal;
 			} else {
 				tempMax = playerMinTotal;
 			}
-			String mess = ("Player total: " + Integer.toString(tempMax) + ")");
+			String mess = ("Player total: " + Integer.toString(tempMax));
 			Log.add(new Message(mess, "Player"));
 			hit_stay_q = false;
 			dealer_turn = true;
 		}
 		
-		if ((dealerMaxTotal == 21 || dealerMinTotal >= 21) && dealer_turn == true) {
+		if ((dealerMaxTotal == BLACKJACK || dealerMinTotal >= BLACKJACK) && dealer_turn == true) {
 			int tempMax = 0;
-			if (dealerMaxTotal <= 21) {
+			if (dealerMaxTotal <= BLACKJACK) {
 				tempMax = dealerMaxTotal;
 			} else {
 				tempMax = dealerMinTotal;
 			}
-			String mess = ("Dealer total: " + Integer.toString(tempMax) + ")");
+			String mess = ("Dealer total: " + Integer.toString(tempMax));
 			Log.add(new Message(mess, "Dealer"));
 			setWinner();
 			dealer_turn = false;
@@ -329,12 +330,11 @@ public class GUI extends JFrame {
 		repaint();
 		
 		try {
-			Thread.sleep(2500);
+			Thread.sleep(2);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
 	}
 	
 	public class Board extends JPanel {
@@ -345,24 +345,27 @@ public class GUI extends JFrame {
 			g.fillRect(0, 0, aW, aH);
 			
 			//questions
-			if (hit_stay_q == true) {
-				g.setColor(Color.black);
-				g.setFont(questionFont);
-				g.drawString(questHitStay, gridX+gridW+60, gridY+90);
-				g.drawString("Total:", gridX+gridW+60, gridY+290);
-				if (playerMinTotal == playerMaxTotal) {
-					g.drawString(Integer.toString(playerMaxTotal), gridX+gridW+60, gridY+350);
-				} else if (playerMaxTotal <= 21) {
-					g.drawString(Integer.toString(playerMinTotal) + " or " + Integer.toString(playerMaxTotal), gridX+gridW+60, gridY+350);
-				} else {
-					g.drawString(Integer.toString(playerMinTotal), gridX+gridW+60, gridY+350);
-				}
-			} else if (play_more_q == true) {
+			g.setColor(Color.black);
+			g.setFont(questionFont);
+			if(hit_stay_q == true) {
+				g.drawString(questHitStay, gridX+gridW+60, gridY+500);
+			}
+
+			g.drawString("Player total:", gridX+gridW+60, gridY+140);
+			if(playerMaxTotal <= BLACKJACK) {
+				g.drawString(Integer.toString(playerMaxTotal), gridX+gridW+60, gridY+200);
+			}
+			else {
+				g.drawString(Integer.toString(playerMinTotal), gridX+gridW+60, gridY+200);
+				
+			}
+			
+			if (play_more_q == true) {
 				g.setColor(Color.black);
 				g.setFont(questionFont);
 				g.drawString(questPlayMore, gridX+gridW+70, gridY+490);
 			}
-			g.setColor(Color.black);
+			g.setColor(Color.white);
 			g.fillRect(gridX, gridY+gridH+50, gridW, 500);
 			
 			//Log
@@ -382,7 +385,7 @@ public class GUI extends JFrame {
 			g.setColor(Color.BLACK);
 			g.setFont(questionFont);
 			String score = ("Score: " + Integer.toString(Main.pWins) + " - " + Integer.toString(Main.dWins));
-			g.drawString(score, gridX+gridW+70, gridY+gridH+300);
+			g.drawString(score, gridX+gridW+70, gridY+gridH+275);
 			
 			//player cards
 			int index = 0;
@@ -437,8 +440,8 @@ public class GUI extends JFrame {
 			}
 			
 			// Dealer cards
-			if(dealer_turn == true) {
-				index = 0;
+			index = 0;
+			if(hit_stay_q == false) {
 				for(Card c: dealerCards) {
 					g.setColor(Color.WHITE);
 					g.fillRoundRect(gridX+index*cardTW+spacing, gridY+spacing+200, cardW, cardH, 10, 10);
@@ -450,7 +453,7 @@ public class GUI extends JFrame {
 					
 					g.setFont(cardFont);
 					g.drawString(c.symbol, gridX+index*cardTW+spacing*2, gridY+cardTH+cardH); // Card numbers
-	
+
 					if(c.shape.equalsIgnoreCase("Clubs")) { // Draw clubs card
 						g.setColor(Color.BLACK);
 						g.fillOval(gridX+index*cardTW+35, gridY+cardTH+85, 40, 40);
@@ -486,22 +489,19 @@ public class GUI extends JFrame {
 						g.fillOval(gridX+index*cardTW+70, gridY+cardTH+70, 40, 40);
 						g.fillArc(gridX+index*cardTW+30, gridY+cardTH+96, 90, 70, 50, 80);
 					}
-					index++;
-				}
-				
-				g.setColor(Color.black);
-				g.setFont(questionFont);
-				g.drawString("Your total: ", gridX+gridW+60, gridY+40);
-				if (playerMaxTotal <= 21) {
-					g.drawString(Integer.toString(playerMaxTotal), gridX+gridW+60, gridY+120);
-				} else {
-					g.drawString(Integer.toString(playerMinTotal), gridX+gridW+60, gridY+120);
-				}
-				g.drawString("Dealer's total: ", gridX+gridW+60, gridY+240);
-				if (dealerMaxTotal <= 21) {
-					g.drawString(Integer.toString(dealerMaxTotal), gridX+gridW+60, gridY+320);
-				} else {
-					g.drawString(Integer.toString(dealerMinTotal), gridX+gridW+60, gridY+320);
+				index++;
+			}
+			
+				if(dealer_turn == true || play_more_q == true) {
+					g.setColor(Color.black);
+					g.setFont(questionFont);
+
+					g.drawString("Dealer's total: ", gridX+gridW+60, gridY+290);
+					if (dealerMaxTotal <= BLACKJACK) {
+						g.drawString(Integer.toString(dealerMaxTotal), gridX+gridW+60, gridY+350);
+					} else {
+						g.drawString(Integer.toString(dealerMinTotal), gridX+gridW+60, gridY+350);
+					}
 				}
 			}
 			
@@ -515,10 +515,9 @@ public class GUI extends JFrame {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			if (hit_stay_q == true) {
-			//	System.out.println("You clicked 'HIT'");
-				
+
 				int tempMax = 0;
-				if (playerMaxTotal <= 21) {
+				if (playerMaxTotal <= BLACKJACK) {
 					tempMax = playerMaxTotal;
 				} else {
 					tempMax = playerMinTotal;
@@ -526,51 +525,31 @@ public class GUI extends JFrame {
 				String mess = ("You decided to hit! (total: " + Integer.toString(tempMax) + ")");
 				Log.add(new Message(mess, "Player"));
 				
-				tempC = rand.nextInt(52);
-				while (Cards.get(tempC).used == true) {
-					tempC = rand.nextInt(52);
-				}
-				playerCards.add(Cards.get(tempC));
-				Cards.get(tempC).setUsed();
-			//	System.out.println("Card " + pCards.get(pCards.size()-1).name + " of " + pCards.get(pCards.size()-1).shape + " added to the player's cards.");
+				playerCards.add(Cards.pop());
 			}
 		}
-		
 	}
 	
-	public class ActStay implements ActionListener {
-
-		@Override
+	public class ActStay implements ActionListener { // If user chooses stay
 		public void actionPerformed(ActionEvent e) {
 			if (hit_stay_q == true) {
-			//	System.out.println("You clicked 'STAY'");
-				
 				int tempMax = 0;
-				if (playerMaxTotal <= 21) {
+				if (playerMaxTotal <= BLACKJACK) {
 					tempMax = playerMaxTotal;
 				} else {
 					tempMax = playerMinTotal;
 				}
-				String mess = ("You decided to stay! (total: " + Integer.toString(tempMax) + ")");
+				String mess = ("Stay! (total: " + Integer.toString(tempMax) + ")");
 				Log.add(new Message(mess, "Player"));
 				
 				hit_stay_q = false;
 				dealer_turn = true;
 			}
 		}
-		
 	}
 	
-	public class ActYes implements ActionListener {
-
-		@Override
-		public void actionPerformed(ActionEvent e) {
-		//	System.out.println("You clicked 'YES'");
-			
-			for (Card c : Cards) {
-				c.setNotUsed();
-			}
-			
+	public class ActYes implements ActionListener { // If user chooses yes
+		public void actionPerformed(ActionEvent e) {		
 			playerCards.clear();
 			dealerCards.clear();
 			Log.clear();
@@ -582,16 +561,30 @@ public class GUI extends JFrame {
 			dealerCards.add(Cards.pop());
 			playerCards.add(Cards.pop());
 			dealerCards.add(Cards.pop());
+			
+			totalsChecker();
+			String temp_str = "starting_temp_str_name";
+			for (int i = 0; i < 52; i++) {
+				if (i % 4 == 0) {
+					temp_str = "Spades";
+				} else if (i % 4 == 1) {
+					temp_str = "Hearts";
+				} else if (i % 4 == 2) {
+					temp_str = "Diamonds";
+				} else if (i % 4 == 3) {
+					temp_str = "Clubs";
+				}
+				Cards.push(new Card((i/4) + 1, temp_str, i));
+			}
+			
+			Collections.shuffle(Cards);
 		}
 	}
 	
-	public class ActNo implements ActionListener {
-
-		@Override
-		public void actionPerformed(ActionEvent e) {
-		//	System.out.println("You clicked 'NO'");
-			Main.sentinel = true;
-			dispose();
+	public class ActNo implements ActionListener { // If user chooses no
+		public void actionPerformed(ActionEvent e) { 
+			Main.sentinel = true; // Return sentinel to Main class
+			dispose(); // Exit program
 		}
 	}
 }
