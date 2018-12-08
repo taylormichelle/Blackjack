@@ -336,9 +336,8 @@ public class GUI extends JFrame {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public class Board extends JPanel {
-		
 		public void paintComponent(Graphics g) {
 			//background
 			g.setColor(colorBackground);
