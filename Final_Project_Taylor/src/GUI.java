@@ -11,57 +11,51 @@ import java.util.*;
 public class GUI extends JFrame {
 	
 	final int BLACKJACK = 21;
-	//randomizer for cards
-	Random rand = new Random();
-	
-	//temporary integer used for used status
-	int tempC;
-	
-	//boolean that indicates whether the dealer is thinking or not
-	boolean dealerHit = false;
+
+	boolean dealerHit = false;	//boolean that indicates whether the dealer is thinking or not
 	
 	//list of messages
 	ArrayList<Message> Log = new ArrayList<Message>();
 	
-	//fonts used
+	// Fonts
 	Font cardFont = new Font("Calibri", Font.PLAIN, 40);
 	Font questionFont = new Font("Arial", Font.BOLD, 40);
 	Font buttonFont = new Font("Calibri", Font.PLAIN, 25);
-	Font logFont = new Font("Calibri", Font.PLAIN, 30);
+	Font logFont = new Font("Calibri", Font.PLAIN, 22);
 	
-	//Log message colors
+	// Log colors
 	Color cDealer = Color.RED;
 	Color cPlayer = Color.GREEN;
 	
-	//strings used
+	// Strings
 	String questHitStay = new String("Hit or Stay?");
 	String questPlayMore = new String("Play more?");
 	
-	//colors used
+	// Colors
 	Color colorBackground = new Color(39,119,50);
 	Color colorButton = new Color(204,204,0);
 	
-	//buttons used
+	// Buttons
 	JButton hit = new JButton();
 	JButton stay = new JButton();
 	JButton yes = new JButton();
 	JButton no = new JButton();
 	
-	//screen resolution
+	// Screen resolution
 	int sW = (int) Toolkit.getDefaultToolkit().getScreenSize().getWidth();
 	int sH = (int) Toolkit.getDefaultToolkit().getScreenSize().getHeight();
 	
-	//window resolution
+	// Window resolution
 	int aW = 1300;
 	int aH = 800;
 	
-	//card grid position and dimensions
+	// Card grid
 	int gridX = 50;
 	int gridY = 50;
 	int gridW = 900;
 	int gridH = 400;
 	
-	//card spacing and dimensions
+	// Card spacing
 	int spacing = 10;
 	int rounding = 10;
 	int cardTW = (int) gridW/6;
@@ -85,7 +79,7 @@ public class GUI extends JFrame {
 	int dealerMinTotal = 0;
 	int dealerMaxTotal = 0;
 	
-	//polygons for diamond shapes
+	// Polygons for diamond shapes
 	int[] polyX = new int[4];
 	int[] polyY = new int[4];
 	
@@ -101,8 +95,8 @@ public class GUI extends JFrame {
 		this.setContentPane(board);
 		board.setLayout(null);
 
-		//button stuff
-		
+		// Buttons
+		//Hit
 		ActHit actHit = new ActHit();
 		hit.addActionListener(actHit);
 		hit.setBounds(1000, 600, 100, 50);
@@ -110,7 +104,7 @@ public class GUI extends JFrame {
 		hit.setFont(buttonFont);
 		hit.setText("HIT");
 		board.add(hit);
-		
+		//Stay
 		ActStay actStay = new ActStay();
 		stay.addActionListener(actStay);
 		stay.setBounds(1150, 600, 100, 50);
@@ -118,7 +112,7 @@ public class GUI extends JFrame {
 		stay.setFont(buttonFont);
 		stay.setText("STAY");
 		board.add(stay);
-		
+		//Yes
 		ActYes actYes = new ActYes();
 		yes.addActionListener(actYes);
 		yes.setBounds(1000, 600, 100, 50);
@@ -126,7 +120,7 @@ public class GUI extends JFrame {
 		yes.setFont(buttonFont);
 		yes.setText("YES");
 		board.add(yes);
-		
+		//No
 		ActNo actNo = new ActNo();
 		no.addActionListener(actNo);
 		no.setBounds(1150, 600, 100, 50);
@@ -150,8 +144,9 @@ public class GUI extends JFrame {
 			Cards.push(new Card((i/4) + 1, temp_str, i));
 		}
 		
+		// Shuffle cards
 		Collections.shuffle(Cards);
-		//Add two cards to the player hand and two to the dealer
+		// Add two cards to the player hand and two to the dealer
 		playerCards.add(Cards.pop());
 		dealerCards.add(Cards.pop());
 		playerCards.add(Cards.pop());
